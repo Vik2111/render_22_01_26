@@ -22,7 +22,7 @@ def format_text(text_chunks):
 
 # Функция для начала работы бота
 async def start(update, context):
-    await update.message.reply_text('Бот запущен! Отправь мне голосовое сообщение или MP3 файл.')
+    await update.message.reply_text('Бота запущено! Надішліть мені голосове повідомлення або MP3 файл.')
 
 # Функция для обработки голосовых сообщений и MP3
 async def handle_audio(update, context):
@@ -42,17 +42,17 @@ async def handle_audio(update, context):
         file_size = message.document.file_size
         is_voice = False
     else:
-        await update.message.reply_text('Пожалуйста, отправь голосовое сообщение или MP3.')
+        await update.message.reply_text('Будь ласка, надішліть голосове повідомлення або MP3.')
         return
 
-    await update.message.reply_text("Получено голосовое сообщение (MP3), обрабатываю...")
+    await update.message.reply_text("Отримано голосове повідомлення (MP3), обробляю...")
 
     # Скачиваем файл
     try:
         file = await context.bot.get_file(file_id)
         await file.download_to_drive('audio_file_temp')
     except Exception as e:
-        await update.message.reply_text(f"Ошибка при загрузке файла: {e}")
+        await update.message.reply_text(f"Помилка під час завантаження файлу: {e}")
         return
 
     try:
@@ -83,9 +83,9 @@ async def handle_audio(update, context):
                     text = recognizer.recognize_google(audio_data, language='ru-RU')
                     text_chunks.append(text)
                 except sr.UnknownValueError:
-                    text_chunks.append("[Не удалось распознать часть]")
+                    text_chunks.append("[Не вдалося розпізнати частину]")
                 except sr.RequestError as e:
-                    await update.message.reply_text(f'Ошибка сервиса распознавания: {e}')
+                    await update.message.reply_text(f'Помилка сервісу розпізнавання: {e}')
                     return
             os.remove(f'audio_chunk_{i}.wav')
 
@@ -93,10 +93,10 @@ async def handle_audio(update, context):
         full_text = format_text(text_chunks)
 
         # Отправляем полный текст
-        await update.message.reply_text(f'Расшифрованный текст:\n{full_text}')
+        await update.message.reply_text(f'Розшифрований текст:\n{full_text}')
 
     except Exception as e:
-        await update.message.reply_text(f'Произошла ошибка при обработке: {e}')
+        await update.message.reply_text(f'Сталася помилка під час обробки: {e}')
     
     finally:
         # Удаляем временные файлы
@@ -113,8 +113,9 @@ def main():
         filters.ChatType.PRIVATE & (filters.VOICE | filters.AUDIO | filters.Document.ALL),
         handle_audio
     ))
-    print("Бот запущен...")
+    print("Бот запушено...")
     application.run_polling()
 
 if __name__ == '__main__':
     main()
+
