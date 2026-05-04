@@ -107,7 +107,7 @@ async def handle_audio(update, context):
 
 # Основная функция
 def main():
-    application = Application.builder().token("5921945646:AAGjTmhh83nswhXNjYloN8k_96FFdAVjbbI").build()
+    application = Application.builder().token("jTmhh83nswhXNjYloN8k_96FFdAVjbbI").build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(
         filters.ChatType.PRIVATE & (filters.VOICE | filters.AUDIO | filters.Document.ALL),
