@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 import telegram.error
 import speech_recognition as sr
@@ -107,7 +108,10 @@ async def handle_audio(update, context):
 
 # Основная функция
 def main():
-    application = Application.builder().token("5921945646:AAEsIqnwyQbBjb8jJUadTMbjB3s8mJ8h7Fo").build()
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        raise ValueError("TELEGRAM_BOT_TOKEN is not set.")
+    application = Application.builder().token(token).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(
         filters.ChatType.PRIVATE & (filters.VOICE | filters.AUDIO | filters.Document.ALL),
