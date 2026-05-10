@@ -4,7 +4,21 @@ import telegram.error
 import speech_recognition as sr
 from pydub import AudioSegment
 import os
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
+class DummyHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b"Bot is running!")
+
+def run_dummy_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(('0.0.0.0', port), DummyHandler)
+    print(f"Starting dummy server on port {port}...")
+    server.serve_forever()
 # Инициализация распознавателя речи
 recognizer = sr.Recognizer()
 
@@ -111,6 +125,12 @@ def main():
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     if not token:
         raise ValueError("TELEGRAM_BOT_TOKEN is not set.")
+        
+    # Запускаем фиктивный сервер в фоновом потоке
+    server_thread = threading.Thread(target=run_dummy_server)
+    server_thread.daemon = True
+    server_thread.start()
+
     application = Application.builder().token(token).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(
